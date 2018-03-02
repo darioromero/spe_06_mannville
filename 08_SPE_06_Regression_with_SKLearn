@@ -1,0 +1,329 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "library(tfestimators)\n",
+    "library(tensorflow)\n",
+    "library(tidyverse)\n",
+    "library(operators)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "'D:/Users/drome/gitrepos/spe 06/MannvilleGroup_Strat_Hackathon'"
+      ],
+      "text/latex": [
+       "'D:/Users/drome/gitrepos/spe 06/MannvilleGroup\\_Strat\\_Hackathon'"
+      ],
+      "text/markdown": [
+       "'D:/Users/drome/gitrepos/spe 06/MannvilleGroup_Strat_Hackathon'"
+      ],
+      "text/plain": [
+       "[1] \"D:/Users/drome/gitrepos/spe 06/MannvilleGroup_Strat_Hackathon\""
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "getwd()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 4,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "setwd(\"./dataset_FINAL_20180225_1556_for_Modeling.csv\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Parsed with column specification:\n",
+      "cols(\n",
+      "  .default = col_double(),\n",
+      "  HorID = col_integer()\n",
+      ")\n",
+      "See spec(...) for full column specifications.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<thead><tr><th scope=col>DEPT</th><th scope=col>HorID</th><th scope=col>lng</th><th scope=col>lat</th><th scope=col>DPHI</th><th scope=col>GR</th><th scope=col>ILD</th><th scope=col>NPHI</th><th scope=col>DPHI1</th><th scope=col>GR1</th><th scope=col>...</th><th scope=col>ILD_ner1</th><th scope=col>NPHI_ner1</th><th scope=col>DPHI_ner2</th><th scope=col>GR_ner2</th><th scope=col>ILD_ner2</th><th scope=col>NPHI_ner2</th><th scope=col>DPHI_ner3</th><th scope=col>GR_ner3</th><th scope=col>ILD_ner3</th><th scope=col>NPHI_ner3</th></tr></thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>393      </td><td> 1000    </td><td>-114.6207</td><td>55.28869 </td><td>0.299    </td><td>72.249   </td><td>3.338    </td><td>0.429    </td><td>0.215    </td><td>88.403   </td><td>...      </td><td>2.392    </td><td>0.649    </td><td>0.338    </td><td> 59.914  </td><td> 4.215   </td><td>0.410    </td><td>0.364    </td><td> 63.731  </td><td>5.886    </td><td>0.425    </td></tr>\n",
+       "\t<tr><td>549      </td><td> 4000    </td><td>-114.6207</td><td>55.28869 </td><td>0.247    </td><td>76.644   </td><td>4.313    </td><td>0.427    </td><td>0.226    </td><td>78.224   </td><td>...      </td><td>4.029    </td><td>0.422    </td><td>0.121    </td><td> 86.346  </td><td> 5.408   </td><td>0.331    </td><td>0.586    </td><td> 73.881  </td><td>1.408    </td><td>0.606    </td></tr>\n",
+       "\t<tr><td>584      </td><td> 5000    </td><td>-114.6207</td><td>55.28869 </td><td>0.184    </td><td>72.472   </td><td>5.379    </td><td>0.357    </td><td>0.210    </td><td>82.798   </td><td>...      </td><td>4.227    </td><td>0.379    </td><td>0.299    </td><td> 67.125  </td><td>12.487   </td><td>0.400    </td><td>0.183    </td><td>102.454  </td><td>6.332    </td><td>0.416    </td></tr>\n",
+       "\t<tr><td>597      </td><td> 7000    </td><td>-114.6207</td><td>55.28869 </td><td>0.180    </td><td>69.942   </td><td>4.265    </td><td>0.367    </td><td>0.528    </td><td>78.466   </td><td>...      </td><td>4.840    </td><td>0.362    </td><td>0.334    </td><td> 94.444  </td><td> 4.500   </td><td>0.450    </td><td>0.136    </td><td>124.856  </td><td>4.074    </td><td>0.413    </td></tr>\n",
+       "\t<tr><td>607      </td><td>11000    </td><td>-114.6207</td><td>55.28869 </td><td>0.191    </td><td>57.457   </td><td>9.279    </td><td>0.312    </td><td>0.150    </td><td>93.824   </td><td>...      </td><td>3.501    </td><td>0.873    </td><td>0.228    </td><td>109.653  </td><td> 4.482   </td><td>0.485    </td><td>0.180    </td><td> 64.791  </td><td>8.441    </td><td>0.369    </td></tr>\n",
+       "\t<tr><td>607      </td><td>12000    </td><td>-114.6207</td><td>55.28869 </td><td>0.191    </td><td>57.457   </td><td>9.279    </td><td>0.312    </td><td>0.137    </td><td>90.261   </td><td>...      </td><td>3.501    </td><td>0.873    </td><td>0.148    </td><td> 92.905  </td><td> 8.885   </td><td>0.350    </td><td>0.240    </td><td> 75.455  </td><td>6.986    </td><td>0.457    </td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "\\begin{tabular}{r|llllllllllllllllllllllllllllllllllllllllllllllllllllllllllll}\n",
+       " DEPT & HorID & lng & lat & DPHI & GR & ILD & NPHI & DPHI1 & GR1 & ... & ILD\\_ner1 & NPHI\\_ner1 & DPHI\\_ner2 & GR\\_ner2 & ILD\\_ner2 & NPHI\\_ner2 & DPHI\\_ner3 & GR\\_ner3 & ILD\\_ner3 & NPHI\\_ner3\\\\\n",
+       "\\hline\n",
+       "\t 393       &  1000     & -114.6207 & 55.28869  & 0.299     & 72.249    & 3.338     & 0.429     & 0.215     & 88.403    & ...       & 2.392     & 0.649     & 0.338     &  59.914   &  4.215    & 0.410     & 0.364     &  63.731   & 5.886     & 0.425    \\\\\n",
+       "\t 549       &  4000     & -114.6207 & 55.28869  & 0.247     & 76.644    & 4.313     & 0.427     & 0.226     & 78.224    & ...       & 4.029     & 0.422     & 0.121     &  86.346   &  5.408    & 0.331     & 0.586     &  73.881   & 1.408     & 0.606    \\\\\n",
+       "\t 584       &  5000     & -114.6207 & 55.28869  & 0.184     & 72.472    & 5.379     & 0.357     & 0.210     & 82.798    & ...       & 4.227     & 0.379     & 0.299     &  67.125   & 12.487    & 0.400     & 0.183     & 102.454   & 6.332     & 0.416    \\\\\n",
+       "\t 597       &  7000     & -114.6207 & 55.28869  & 0.180     & 69.942    & 4.265     & 0.367     & 0.528     & 78.466    & ...       & 4.840     & 0.362     & 0.334     &  94.444   &  4.500    & 0.450     & 0.136     & 124.856   & 4.074     & 0.413    \\\\\n",
+       "\t 607       & 11000     & -114.6207 & 55.28869  & 0.191     & 57.457    & 9.279     & 0.312     & 0.150     & 93.824    & ...       & 3.501     & 0.873     & 0.228     & 109.653   &  4.482    & 0.485     & 0.180     &  64.791   & 8.441     & 0.369    \\\\\n",
+       "\t 607       & 12000     & -114.6207 & 55.28869  & 0.191     & 57.457    & 9.279     & 0.312     & 0.137     & 90.261    & ...       & 3.501     & 0.873     & 0.148     &  92.905   &  8.885    & 0.350     & 0.240     &  75.455   & 6.986     & 0.457    \\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "DEPT | HorID | lng | lat | DPHI | GR | ILD | NPHI | DPHI1 | GR1 | ... | ILD_ner1 | NPHI_ner1 | DPHI_ner2 | GR_ner2 | ILD_ner2 | NPHI_ner2 | DPHI_ner3 | GR_ner3 | ILD_ner3 | NPHI_ner3 | \n",
+       "|---|---|---|---|---|---|\n",
+       "| 393       |  1000     | -114.6207 | 55.28869  | 0.299     | 72.249    | 3.338     | 0.429     | 0.215     | 88.403    | ...       | 2.392     | 0.649     | 0.338     |  59.914   |  4.215    | 0.410     | 0.364     |  63.731   | 5.886     | 0.425     | \n",
+       "| 549       |  4000     | -114.6207 | 55.28869  | 0.247     | 76.644    | 4.313     | 0.427     | 0.226     | 78.224    | ...       | 4.029     | 0.422     | 0.121     |  86.346   |  5.408    | 0.331     | 0.586     |  73.881   | 1.408     | 0.606     | \n",
+       "| 584       |  5000     | -114.6207 | 55.28869  | 0.184     | 72.472    | 5.379     | 0.357     | 0.210     | 82.798    | ...       | 4.227     | 0.379     | 0.299     |  67.125   | 12.487    | 0.400     | 0.183     | 102.454   | 6.332     | 0.416     | \n",
+       "| 597       |  7000     | -114.6207 | 55.28869  | 0.180     | 69.942    | 4.265     | 0.367     | 0.528     | 78.466    | ...       | 4.840     | 0.362     | 0.334     |  94.444   |  4.500    | 0.450     | 0.136     | 124.856   | 4.074     | 0.413     | \n",
+       "| 607       | 11000     | -114.6207 | 55.28869  | 0.191     | 57.457    | 9.279     | 0.312     | 0.150     | 93.824    | ...       | 3.501     | 0.873     | 0.228     | 109.653   |  4.482    | 0.485     | 0.180     |  64.791   | 8.441     | 0.369     | \n",
+       "| 607       | 12000     | -114.6207 | 55.28869  | 0.191     | 57.457    | 9.279     | 0.312     | 0.137     | 90.261    | ...       | 3.501     | 0.873     | 0.148     |  92.905   |  8.885    | 0.350     | 0.240     |  75.455   | 6.986     | 0.457     | \n",
+       "\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  DEPT HorID lng       lat      DPHI  GR     ILD   NPHI  DPHI1 GR1    ...\n",
+       "1 393   1000 -114.6207 55.28869 0.299 72.249 3.338 0.429 0.215 88.403 ...\n",
+       "2 549   4000 -114.6207 55.28869 0.247 76.644 4.313 0.427 0.226 78.224 ...\n",
+       "3 584   5000 -114.6207 55.28869 0.184 72.472 5.379 0.357 0.210 82.798 ...\n",
+       "4 597   7000 -114.6207 55.28869 0.180 69.942 4.265 0.367 0.528 78.466 ...\n",
+       "5 607  11000 -114.6207 55.28869 0.191 57.457 9.279 0.312 0.150 93.824 ...\n",
+       "6 607  12000 -114.6207 55.28869 0.191 57.457 9.279 0.312 0.137 90.261 ...\n",
+       "  ILD_ner1 NPHI_ner1 DPHI_ner2 GR_ner2 ILD_ner2 NPHI_ner2 DPHI_ner3 GR_ner3\n",
+       "1 2.392    0.649     0.338      59.914  4.215   0.410     0.364      63.731\n",
+       "2 4.029    0.422     0.121      86.346  5.408   0.331     0.586      73.881\n",
+       "3 4.227    0.379     0.299      67.125 12.487   0.400     0.183     102.454\n",
+       "4 4.840    0.362     0.334      94.444  4.500   0.450     0.136     124.856\n",
+       "5 3.501    0.873     0.228     109.653  4.482   0.485     0.180      64.791\n",
+       "6 3.501    0.873     0.148      92.905  8.885   0.350     0.240      75.455\n",
+       "  ILD_ner3 NPHI_ner3\n",
+       "1 5.886    0.425    \n",
+       "2 1.408    0.606    \n",
+       "3 6.332    0.416    \n",
+       "4 4.074    0.413    \n",
+       "5 8.441    0.369    \n",
+       "6 6.986    0.457    "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# read data\n",
+    "strata <- read_csv(\"dataset_FINAL_20180225_1556_for_Modeling.csv\")\n",
+    "head(strata, 6)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# factor-ize HorID column\n",
+    "strata$HorID <- factor(strata$HorID)\n",
+    "\n",
+    "response <- \"DEPT\"\n",
+    "features <- setdiff(names(strata), response)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# split into train, test datasets\n",
+    "set.seed(123)\n",
+    "partitions <- modelr::resample_partition(strata, c(test = 0.15, train = 0.85))\n",
+    "strata_train <- as.data.frame(partitions$train)\n",
+    "strata_test  <- as.data.frame(partitions$test)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 10,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<thead><tr><th scope=col>DEPT</th><th scope=col>HorID</th><th scope=col>lng</th><th scope=col>lat</th><th scope=col>DPHI</th><th scope=col>GR</th><th scope=col>ILD</th><th scope=col>NPHI</th><th scope=col>DPHI1</th><th scope=col>GR1</th><th scope=col>...</th><th scope=col>ILD_ner1</th><th scope=col>NPHI_ner1</th><th scope=col>DPHI_ner2</th><th scope=col>GR_ner2</th><th scope=col>ILD_ner2</th><th scope=col>NPHI_ner2</th><th scope=col>DPHI_ner3</th><th scope=col>GR_ner3</th><th scope=col>ILD_ner3</th><th scope=col>NPHI_ner3</th></tr></thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>393      </td><td>1000     </td><td>-114.6207</td><td>55.28869 </td><td>0.299    </td><td>72.249   </td><td>3.338    </td><td>0.429    </td><td>0.215    </td><td>88.403   </td><td>...      </td><td>2.392    </td><td>0.649    </td><td>0.338    </td><td> 59.914  </td><td> 4.215   </td><td>0.410    </td><td>0.364    </td><td> 63.731  </td><td>5.886    </td><td>0.425    </td></tr>\n",
+       "\t<tr><td>549      </td><td>4000     </td><td>-114.6207</td><td>55.28869 </td><td>0.247    </td><td>76.644   </td><td>4.313    </td><td>0.427    </td><td>0.226    </td><td>78.224   </td><td>...      </td><td>4.029    </td><td>0.422    </td><td>0.121    </td><td> 86.346  </td><td> 5.408   </td><td>0.331    </td><td>0.586    </td><td> 73.881  </td><td>1.408    </td><td>0.606    </td></tr>\n",
+       "\t<tr><td>584      </td><td>5000     </td><td>-114.6207</td><td>55.28869 </td><td>0.184    </td><td>72.472   </td><td>5.379    </td><td>0.357    </td><td>0.210    </td><td>82.798   </td><td>...      </td><td>4.227    </td><td>0.379    </td><td>0.299    </td><td> 67.125  </td><td>12.487   </td><td>0.400    </td><td>0.183    </td><td>102.454  </td><td>6.332    </td><td>0.416    </td></tr>\n",
+       "\t<tr><td>597      </td><td>7000     </td><td>-114.6207</td><td>55.28869 </td><td>0.180    </td><td>69.942   </td><td>4.265    </td><td>0.367    </td><td>0.528    </td><td>78.466   </td><td>...      </td><td>4.840    </td><td>0.362    </td><td>0.334    </td><td> 94.444  </td><td> 4.500   </td><td>0.450    </td><td>0.136    </td><td>124.856  </td><td>4.074    </td><td>0.413    </td></tr>\n",
+       "\t<tr><td>607      </td><td>11000    </td><td>-114.6207</td><td>55.28869 </td><td>0.191    </td><td>57.457   </td><td>9.279    </td><td>0.312    </td><td>0.150    </td><td>93.824   </td><td>...      </td><td>3.501    </td><td>0.873    </td><td>0.228    </td><td>109.653  </td><td> 4.482   </td><td>0.485    </td><td>0.180    </td><td> 64.791  </td><td>8.441    </td><td>0.369    </td></tr>\n",
+       "\t<tr><td>607      </td><td>13000    </td><td>-114.6207</td><td>55.28869 </td><td>0.191    </td><td>57.457   </td><td>9.279    </td><td>0.312    </td><td>0.160    </td><td>86.811   </td><td>...      </td><td>3.501    </td><td>0.873    </td><td>0.186    </td><td> 89.731  </td><td> 5.919   </td><td>0.453    </td><td>0.230    </td><td> 88.421  </td><td>6.262    </td><td>0.496    </td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "\\begin{tabular}{r|llllllllllllllllllllllllllllllllllllllllllllllllllllllllllll}\n",
+       " DEPT & HorID & lng & lat & DPHI & GR & ILD & NPHI & DPHI1 & GR1 & ... & ILD\\_ner1 & NPHI\\_ner1 & DPHI\\_ner2 & GR\\_ner2 & ILD\\_ner2 & NPHI\\_ner2 & DPHI\\_ner3 & GR\\_ner3 & ILD\\_ner3 & NPHI\\_ner3\\\\\n",
+       "\\hline\n",
+       "\t 393       & 1000      & -114.6207 & 55.28869  & 0.299     & 72.249    & 3.338     & 0.429     & 0.215     & 88.403    & ...       & 2.392     & 0.649     & 0.338     &  59.914   &  4.215    & 0.410     & 0.364     &  63.731   & 5.886     & 0.425    \\\\\n",
+       "\t 549       & 4000      & -114.6207 & 55.28869  & 0.247     & 76.644    & 4.313     & 0.427     & 0.226     & 78.224    & ...       & 4.029     & 0.422     & 0.121     &  86.346   &  5.408    & 0.331     & 0.586     &  73.881   & 1.408     & 0.606    \\\\\n",
+       "\t 584       & 5000      & -114.6207 & 55.28869  & 0.184     & 72.472    & 5.379     & 0.357     & 0.210     & 82.798    & ...       & 4.227     & 0.379     & 0.299     &  67.125   & 12.487    & 0.400     & 0.183     & 102.454   & 6.332     & 0.416    \\\\\n",
+       "\t 597       & 7000      & -114.6207 & 55.28869  & 0.180     & 69.942    & 4.265     & 0.367     & 0.528     & 78.466    & ...       & 4.840     & 0.362     & 0.334     &  94.444   &  4.500    & 0.450     & 0.136     & 124.856   & 4.074     & 0.413    \\\\\n",
+       "\t 607       & 11000     & -114.6207 & 55.28869  & 0.191     & 57.457    & 9.279     & 0.312     & 0.150     & 93.824    & ...       & 3.501     & 0.873     & 0.228     & 109.653   &  4.482    & 0.485     & 0.180     &  64.791   & 8.441     & 0.369    \\\\\n",
+       "\t 607       & 13000     & -114.6207 & 55.28869  & 0.191     & 57.457    & 9.279     & 0.312     & 0.160     & 86.811    & ...       & 3.501     & 0.873     & 0.186     &  89.731   &  5.919    & 0.453     & 0.230     &  88.421   & 6.262     & 0.496    \\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "DEPT | HorID | lng | lat | DPHI | GR | ILD | NPHI | DPHI1 | GR1 | ... | ILD_ner1 | NPHI_ner1 | DPHI_ner2 | GR_ner2 | ILD_ner2 | NPHI_ner2 | DPHI_ner3 | GR_ner3 | ILD_ner3 | NPHI_ner3 | \n",
+       "|---|---|---|---|---|---|\n",
+       "| 393       | 1000      | -114.6207 | 55.28869  | 0.299     | 72.249    | 3.338     | 0.429     | 0.215     | 88.403    | ...       | 2.392     | 0.649     | 0.338     |  59.914   |  4.215    | 0.410     | 0.364     |  63.731   | 5.886     | 0.425     | \n",
+       "| 549       | 4000      | -114.6207 | 55.28869  | 0.247     | 76.644    | 4.313     | 0.427     | 0.226     | 78.224    | ...       | 4.029     | 0.422     | 0.121     |  86.346   |  5.408    | 0.331     | 0.586     |  73.881   | 1.408     | 0.606     | \n",
+       "| 584       | 5000      | -114.6207 | 55.28869  | 0.184     | 72.472    | 5.379     | 0.357     | 0.210     | 82.798    | ...       | 4.227     | 0.379     | 0.299     |  67.125   | 12.487    | 0.400     | 0.183     | 102.454   | 6.332     | 0.416     | \n",
+       "| 597       | 7000      | -114.6207 | 55.28869  | 0.180     | 69.942    | 4.265     | 0.367     | 0.528     | 78.466    | ...       | 4.840     | 0.362     | 0.334     |  94.444   |  4.500    | 0.450     | 0.136     | 124.856   | 4.074     | 0.413     | \n",
+       "| 607       | 11000     | -114.6207 | 55.28869  | 0.191     | 57.457    | 9.279     | 0.312     | 0.150     | 93.824    | ...       | 3.501     | 0.873     | 0.228     | 109.653   |  4.482    | 0.485     | 0.180     |  64.791   | 8.441     | 0.369     | \n",
+       "| 607       | 13000     | -114.6207 | 55.28869  | 0.191     | 57.457    | 9.279     | 0.312     | 0.160     | 86.811    | ...       | 3.501     | 0.873     | 0.186     |  89.731   |  5.919    | 0.453     | 0.230     |  88.421   | 6.262     | 0.496     | \n",
+       "\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  DEPT HorID lng       lat      DPHI  GR     ILD   NPHI  DPHI1 GR1    ...\n",
+       "1 393  1000  -114.6207 55.28869 0.299 72.249 3.338 0.429 0.215 88.403 ...\n",
+       "2 549  4000  -114.6207 55.28869 0.247 76.644 4.313 0.427 0.226 78.224 ...\n",
+       "3 584  5000  -114.6207 55.28869 0.184 72.472 5.379 0.357 0.210 82.798 ...\n",
+       "4 597  7000  -114.6207 55.28869 0.180 69.942 4.265 0.367 0.528 78.466 ...\n",
+       "5 607  11000 -114.6207 55.28869 0.191 57.457 9.279 0.312 0.150 93.824 ...\n",
+       "6 607  13000 -114.6207 55.28869 0.191 57.457 9.279 0.312 0.160 86.811 ...\n",
+       "  ILD_ner1 NPHI_ner1 DPHI_ner2 GR_ner2 ILD_ner2 NPHI_ner2 DPHI_ner3 GR_ner3\n",
+       "1 2.392    0.649     0.338      59.914  4.215   0.410     0.364      63.731\n",
+       "2 4.029    0.422     0.121      86.346  5.408   0.331     0.586      73.881\n",
+       "3 4.227    0.379     0.299      67.125 12.487   0.400     0.183     102.454\n",
+       "4 4.840    0.362     0.334      94.444  4.500   0.450     0.136     124.856\n",
+       "5 3.501    0.873     0.228     109.653  4.482   0.485     0.180      64.791\n",
+       "6 3.501    0.873     0.186      89.731  5.919   0.453     0.230      88.421\n",
+       "  ILD_ner3 NPHI_ner3\n",
+       "1 5.886    0.425    \n",
+       "2 1.408    0.606    \n",
+       "3 6.332    0.416    \n",
+       "4 4.074    0.413    \n",
+       "5 8.441    0.369    \n",
+       "6 6.262    0.496    "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "head(strata_train)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# construct regressor\n",
+    "regressor <- dnn_regressor(\n",
+    "  feature_columns = feature_columns, \n",
+    "  hidden_units = c(20, 40, 20),\n",
+    "  # hidden_units = c(6, 10, 20, 10, 4), \n",
+    "  n_classes = length(unique(strata$HorID)), \n",
+    "  activation_fn = \"relu\", optimizer = \"Adagrad\"\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# construct input function \n",
+    "strata_input_fn <- function(data) {\n",
+    "  input_fn(data, features = features(), response = response())\n",
+    "}"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# train classifier with training dataset\n",
+    "train(classifier, input_fn = strata_input_fn(strata_train), max_steps = 10000)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# valuate with test dataset\n",
+    "predictions <- predict(classifier, input_fn = strata_input_fn(strata_test))\n",
+    "evaluation <- evaluate(classifier, input_fn = strata_input_fn(strata_test))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "evaluation"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "R",
+   "language": "R",
+   "name": "ir"
+  },
+  "language_info": {
+   "codemirror_mode": "r",
+   "file_extension": ".r",
+   "mimetype": "text/x-r-source",
+   "name": "R",
+   "pygments_lexer": "r",
+   "version": "3.4.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}

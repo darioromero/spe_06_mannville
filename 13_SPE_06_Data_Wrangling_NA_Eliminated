@@ -1,0 +1,323 @@
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 357,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "suppressPackageStartupMessages(library(tidyverse))\n",
+    "suppressPackageStartupMessages(library(\"dplyr\"))\n",
+    "# packageVersion(\"dplyr\")"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 358,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "'D:/Users/drome/gitrepos/spe 06/MannvilleGroup_Strat_Hackathon'"
+      ],
+      "text/latex": [
+       "'D:/Users/drome/gitrepos/spe 06/MannvilleGroup\\_Strat\\_Hackathon'"
+      ],
+      "text/markdown": [
+       "'D:/Users/drome/gitrepos/spe 06/MannvilleGroup_Strat_Hackathon'"
+      ],
+      "text/plain": [
+       "[1] \"D:/Users/drome/gitrepos/spe 06/MannvilleGroup_Strat_Hackathon\""
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "getwd()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 359,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "Parsed with column specification:\n",
+      "cols(\n",
+      "  .default = col_double(),\n",
+      "  id = col_integer(),\n",
+      "  SitID = col_integer(),\n",
+      "  HorID = col_integer(),\n",
+      "  Quality = col_integer(),\n",
+      "  `UWI (AGS)` = col_character(),\n",
+      "  UWI = col_character(),\n",
+      "  Picked = col_integer()\n",
+      ")\n",
+      "See spec(...) for full column specifications.\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<table>\n",
+       "<thead><tr><th scope=col>id</th><th scope=col>SitID</th><th scope=col>DEPT</th><th scope=col>DPHI</th><th scope=col>GR</th><th scope=col>ILD</th><th scope=col>NPHI</th><th scope=col>HorID</th><th scope=col>Pick</th><th scope=col>Quality</th><th scope=col>...</th><th scope=col>ILD_ner1</th><th scope=col>NPHI_ner1</th><th scope=col>DPHI_ner2</th><th scope=col>GR_ner2</th><th scope=col>ILD_ner2</th><th scope=col>NPHI_ner2</th><th scope=col>DPHI_ner3</th><th scope=col>GR_ner3</th><th scope=col>ILD_ner3</th><th scope=col>NPHI_ner3</th></tr></thead>\n",
+       "<tbody>\n",
+       "\t<tr><td>1      </td><td>142218 </td><td>393    </td><td>0.299  </td><td>72.249 </td><td>3.338  </td><td>0.429  </td><td> 1000  </td><td>393    </td><td>1      </td><td>...    </td><td>2.392  </td><td>0.649  </td><td>0.338  </td><td> 59.914</td><td> 4.215 </td><td>0.410  </td><td>0.364  </td><td> 63.731</td><td>5.886  </td><td>0.425  </td></tr>\n",
+       "\t<tr><td>2      </td><td>142218 </td><td>549    </td><td>0.247  </td><td>76.644 </td><td>4.313  </td><td>0.427  </td><td> 4000  </td><td>549    </td><td>1      </td><td>...    </td><td>4.029  </td><td>0.422  </td><td>0.121  </td><td> 86.346</td><td> 5.408 </td><td>0.331  </td><td>0.586  </td><td> 73.881</td><td>1.408  </td><td>0.606  </td></tr>\n",
+       "\t<tr><td>3      </td><td>142218 </td><td>584    </td><td>0.184  </td><td>72.472 </td><td>5.379  </td><td>0.357  </td><td> 5000  </td><td>584    </td><td>1      </td><td>...    </td><td>4.227  </td><td>0.379  </td><td>0.299  </td><td> 67.125</td><td>12.487 </td><td>0.400  </td><td>0.183  </td><td>102.454</td><td>6.332  </td><td>0.416  </td></tr>\n",
+       "\t<tr><td>4      </td><td>142218 </td><td>597    </td><td>0.180  </td><td>69.942 </td><td>4.265  </td><td>0.367  </td><td> 7000  </td><td>597    </td><td>1      </td><td>...    </td><td>4.840  </td><td>0.362  </td><td>0.334  </td><td> 94.444</td><td> 4.500 </td><td>0.450  </td><td>0.136  </td><td>124.856</td><td>4.074  </td><td>0.413  </td></tr>\n",
+       "\t<tr><td>5      </td><td>142218 </td><td>607    </td><td>0.191  </td><td>57.457 </td><td>9.279  </td><td>0.312  </td><td>11000  </td><td>607    </td><td>1      </td><td>...    </td><td>3.501  </td><td>0.873  </td><td>0.228  </td><td>109.653</td><td> 4.482 </td><td>0.485  </td><td>0.180  </td><td> 64.791</td><td>8.441  </td><td>0.369  </td></tr>\n",
+       "\t<tr><td>6      </td><td>142218 </td><td>607    </td><td>0.191  </td><td>57.457 </td><td>9.279  </td><td>0.312  </td><td>12000  </td><td>607    </td><td>1      </td><td>...    </td><td>3.501  </td><td>0.873  </td><td>0.148  </td><td> 92.905</td><td> 8.885 </td><td>0.350  </td><td>0.240  </td><td> 75.455</td><td>6.986  </td><td>0.457  </td></tr>\n",
+       "</tbody>\n",
+       "</table>\n"
+      ],
+      "text/latex": [
+       "\\begin{tabular}{r|lllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll}\n",
+       " id & SitID & DEPT & DPHI & GR & ILD & NPHI & HorID & Pick & Quality & ... & ILD\\_ner1 & NPHI\\_ner1 & DPHI\\_ner2 & GR\\_ner2 & ILD\\_ner2 & NPHI\\_ner2 & DPHI\\_ner3 & GR\\_ner3 & ILD\\_ner3 & NPHI\\_ner3\\\\\n",
+       "\\hline\n",
+       "\t 1       & 142218  & 393     & 0.299   & 72.249  & 3.338   & 0.429   &  1000   & 393     & 1       & ...     & 2.392   & 0.649   & 0.338   &  59.914 &  4.215  & 0.410   & 0.364   &  63.731 & 5.886   & 0.425  \\\\\n",
+       "\t 2       & 142218  & 549     & 0.247   & 76.644  & 4.313   & 0.427   &  4000   & 549     & 1       & ...     & 4.029   & 0.422   & 0.121   &  86.346 &  5.408  & 0.331   & 0.586   &  73.881 & 1.408   & 0.606  \\\\\n",
+       "\t 3       & 142218  & 584     & 0.184   & 72.472  & 5.379   & 0.357   &  5000   & 584     & 1       & ...     & 4.227   & 0.379   & 0.299   &  67.125 & 12.487  & 0.400   & 0.183   & 102.454 & 6.332   & 0.416  \\\\\n",
+       "\t 4       & 142218  & 597     & 0.180   & 69.942  & 4.265   & 0.367   &  7000   & 597     & 1       & ...     & 4.840   & 0.362   & 0.334   &  94.444 &  4.500  & 0.450   & 0.136   & 124.856 & 4.074   & 0.413  \\\\\n",
+       "\t 5       & 142218  & 607     & 0.191   & 57.457  & 9.279   & 0.312   & 11000   & 607     & 1       & ...     & 3.501   & 0.873   & 0.228   & 109.653 &  4.482  & 0.485   & 0.180   &  64.791 & 8.441   & 0.369  \\\\\n",
+       "\t 6       & 142218  & 607     & 0.191   & 57.457  & 9.279   & 0.312   & 12000   & 607     & 1       & ...     & 3.501   & 0.873   & 0.148   &  92.905 &  8.885  & 0.350   & 0.240   &  75.455 & 6.986   & 0.457  \\\\\n",
+       "\\end{tabular}\n"
+      ],
+      "text/markdown": [
+       "\n",
+       "id | SitID | DEPT | DPHI | GR | ILD | NPHI | HorID | Pick | Quality | ... | ILD_ner1 | NPHI_ner1 | DPHI_ner2 | GR_ner2 | ILD_ner2 | NPHI_ner2 | DPHI_ner3 | GR_ner3 | ILD_ner3 | NPHI_ner3 | \n",
+       "|---|---|---|---|---|---|\n",
+       "| 1       | 142218  | 393     | 0.299   | 72.249  | 3.338   | 0.429   |  1000   | 393     | 1       | ...     | 2.392   | 0.649   | 0.338   |  59.914 |  4.215  | 0.410   | 0.364   |  63.731 | 5.886   | 0.425   | \n",
+       "| 2       | 142218  | 549     | 0.247   | 76.644  | 4.313   | 0.427   |  4000   | 549     | 1       | ...     | 4.029   | 0.422   | 0.121   |  86.346 |  5.408  | 0.331   | 0.586   |  73.881 | 1.408   | 0.606   | \n",
+       "| 3       | 142218  | 584     | 0.184   | 72.472  | 5.379   | 0.357   |  5000   | 584     | 1       | ...     | 4.227   | 0.379   | 0.299   |  67.125 | 12.487  | 0.400   | 0.183   | 102.454 | 6.332   | 0.416   | \n",
+       "| 4       | 142218  | 597     | 0.180   | 69.942  | 4.265   | 0.367   |  7000   | 597     | 1       | ...     | 4.840   | 0.362   | 0.334   |  94.444 |  4.500  | 0.450   | 0.136   | 124.856 | 4.074   | 0.413   | \n",
+       "| 5       | 142218  | 607     | 0.191   | 57.457  | 9.279   | 0.312   | 11000   | 607     | 1       | ...     | 3.501   | 0.873   | 0.228   | 109.653 |  4.482  | 0.485   | 0.180   |  64.791 | 8.441   | 0.369   | \n",
+       "| 6       | 142218  | 607     | 0.191   | 57.457  | 9.279   | 0.312   | 12000   | 607     | 1       | ...     | 3.501   | 0.873   | 0.148   |  92.905 |  8.885  | 0.350   | 0.240   |  75.455 | 6.986   | 0.457   | \n",
+       "\n",
+       "\n"
+      ],
+      "text/plain": [
+       "  id SitID  DEPT DPHI  GR     ILD   NPHI  HorID Pick Quality ... ILD_ner1\n",
+       "1 1  142218 393  0.299 72.249 3.338 0.429  1000 393  1       ... 2.392   \n",
+       "2 2  142218 549  0.247 76.644 4.313 0.427  4000 549  1       ... 4.029   \n",
+       "3 3  142218 584  0.184 72.472 5.379 0.357  5000 584  1       ... 4.227   \n",
+       "4 4  142218 597  0.180 69.942 4.265 0.367  7000 597  1       ... 4.840   \n",
+       "5 5  142218 607  0.191 57.457 9.279 0.312 11000 607  1       ... 3.501   \n",
+       "6 6  142218 607  0.191 57.457 9.279 0.312 12000 607  1       ... 3.501   \n",
+       "  NPHI_ner1 DPHI_ner2 GR_ner2 ILD_ner2 NPHI_ner2 DPHI_ner3 GR_ner3 ILD_ner3\n",
+       "1 0.649     0.338      59.914  4.215   0.410     0.364      63.731 5.886   \n",
+       "2 0.422     0.121      86.346  5.408   0.331     0.586      73.881 1.408   \n",
+       "3 0.379     0.299      67.125 12.487   0.400     0.183     102.454 6.332   \n",
+       "4 0.362     0.334      94.444  4.500   0.450     0.136     124.856 4.074   \n",
+       "5 0.873     0.228     109.653  4.482   0.485     0.180      64.791 8.441   \n",
+       "6 0.873     0.148      92.905  8.885   0.350     0.240      75.455 6.986   \n",
+       "  NPHI_ner3\n",
+       "1 0.425    \n",
+       "2 0.606    \n",
+       "3 0.416    \n",
+       "4 0.413    \n",
+       "5 0.369    \n",
+       "6 0.457    "
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# read data\n",
+    "df <- read_csv(\"dataset_10aroundPlus3Near_FINAL.csv\")\n",
+    "head(df, 6)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 360,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "0"
+      ],
+      "text/latex": [
+       "0"
+      ],
+      "text/markdown": [
+       "0"
+      ],
+      "text/plain": [
+       "[1] 0"
+      ]
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "# How many incomplete rows\n",
+    "df = df[complete.cases(df),]\n",
+    "length(df[!complete.cases(df), ]$DEPT)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 361,
+   "metadata": {},
+   "outputs": [
+    {
+     "ename": "ERROR",
+     "evalue": "Error in n > 5: comparison (6) is possible only for atomic and list types\n",
+     "execution_count": 361,
+     "output_type": "error",
+     "traceback": [
+      "Error in n > 5: comparison (6) is possible only for atomic and list types\nTraceback:\n",
+      "1. df %>% group_by(SitID) %>% count(SitID) %>% filter(n > 5)",
+      "2. ..redirect(object, file, type = \"output\", append = FALSE)",
+      "3. filter(n > 5)"
+     ]
+    }
+   ],
+   "source": [
+    "sit <- df %>% group_by(SitID) %>% count(SitID) %>% filter(n > 5)\n",
+    "sit <- sit$SitID\n",
+    "sit"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "df %>% \n",
+    "    dplyr::select(id, SitID, DEPT)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# number of wells (SitIDs)\n",
+    "length(unique(df$SitID))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "class(df$SitID)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# unique SitID\n",
+    "SitIDs = unique(df$SitID)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# table of SitID frequency\n",
+    "sitid_ <- as_tibble(table(df$SitID))\n",
+    "colnames(sitid_) <- c('SitID', 'num')\n",
+    "sitid_$SitID <- sapply(sitid_$SitID, as.integer, simplify = TRUE)\n",
+    "# more than 5 observations per SitID\n",
+    "sitid_ <- (sitid_[sitid_$num > 5, 'SitID'])\n",
+    "tail(sitid_)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "sitid_$SitID[rows_[2]] "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "nrow(sitid_)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "set.seed(123)\n",
+    "trn_pct <- .20\n",
+    "rows_ <- sample(seq_len(nrow(sitid_)), size = floor(nrow(sitid_) * trn_pct), replace = FALSE)\n",
+    "length(rows_)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# create training set\n",
+    "df_training <- tibble()\n",
+    "for (i in 1:length(rows_)) {\n",
+    "    print(df[df$SitID == sitid_$SitID[rows_[i]], ])\n",
+    "#     sitid_[rows_[i]]\n",
+    "}\n",
+    "# for (i in seq_len(nrow(sitid_))) {\n",
+    "#     print(seq_len(nrow))\n",
+    "# #     print(df[sitid_[i, 'SitID'], c('id', 'SitID', 'DEPT')])\n",
+    "#     print(unlist(sitid_[i]))\n",
+    "# }"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "write_csv(x = df, path = \"./dataset_FINAL_20180226_0930_for_Modeling.csv\")"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "R",
+   "language": "R",
+   "name": "ir"
+  },
+  "language_info": {
+   "codemirror_mode": "r",
+   "file_extension": ".r",
+   "mimetype": "text/x-r-source",
+   "name": "R",
+   "pygments_lexer": "r",
+   "version": "3.4.3"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
